@@ -126,7 +126,7 @@
         /* Contenedor Principal de Secciones */
         #world {
             display: flex;
-            width: 300vw;
+            width: 400vw;
             height: 100vh;
             will-change: transform;
         }
@@ -186,7 +186,7 @@
             display: flex;
             flex-direction: column;
             width: 300px;
-            padding-bottom: 20px; /* Ajuste por falta de imagen */
+            padding-bottom: 20px;
         }
 
         .product-info {
@@ -224,6 +224,8 @@
             padding: 10px 20px;
             border-radius: 4px;
             font-family: 'Cinzel', serif;
+            text-decoration: none; /* Importante para el enlace */
+            display: inline-block;
         }
 
         .btn-gaia:hover {
@@ -282,6 +284,26 @@
             font-size: 0.85rem;
         }
 
+        /* CORRECCIÓN VISUAL PARA SELECTS */
+        .input-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #05110a; /* Fondo oscuro */
+            color: #fff;
+            cursor: pointer;
+            /* Flecha dorada personalizada */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23d4af37' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+        }
+
+        /* Estilo para las opciones desplegadas */
+        .input-group select option {
+            background-color: #0a0f0c;
+            color: #fff;
+            padding: 10px;
+        }
+
         input[type="datetime-local"] {
             color-scheme: dark;
         }
@@ -291,16 +313,6 @@
             filter: invert(1);
         }
 
-        .input-group select option {
-            background-color: #0f1c15; 
-            color: #ffffff;
-        }
-
-        .input-group input:focus {
-            border-bottom-color: var(--gold);
-        }
-
-        /* Botones de Mochila */
         .qty-btn {
             background: rgba(212, 175, 55, 0.1);
             border: 1px solid var(--gold);
@@ -386,6 +398,7 @@
         <div class="nav-links">
             <button class="nav-btn" onclick="goTo(1)">Tienda</button>
             <button class="nav-btn" onclick="goTo(2)">Nosotros</button>
+            <button class="nav-btn" onclick="goTo(3)">Ubicación</button>
         </div>
         <div class="cart-icon" onclick="toggleCart()">
             <i class="fas fa-shopping-bag"></i>
@@ -422,7 +435,33 @@
             <div style="background: rgba(15,28,21,0.92); padding: 50px; border-radius: 15px; border: 1px solid var(--gold); max-width: 800px; text-align: center;">
                 <h2 style="margin-bottom: 20px; font-size: 2.2rem; color: var(--gold);">Nuestra Esencia</h2>
                 <p style="margin-bottom: 15px;">Somos una empresa dedicada a darles una segunda vida a tus ideas a través del papel reciclado. Nuestro proceso es totalmente artesanal: recolectamos papel, lo molemos hasta crear una pulpa nueva y lo transformamos en hojas únicas.</p>
-                <button class="btn-gaia" style="margin-top: 25px;" onclick="goTo(1)">Regresar a Tienda</button>
+                <button class="btn-gaia" style="margin-top: 25px;" onclick="goTo(3)">¿Dónde estamos?</button>
+            </div>
+        </section>
+
+        <section class="section">
+            <div style="background: rgba(15,28,21,0.92); padding: 40px; border-radius: 15px; border: 1px solid var(--gold); max-width: 800px; text-align: center; width: 90%;">
+                <h2 style="margin-bottom: 15px; font-size: 2.2rem; color: var(--gold); font-family: 'Cinzel';">Nuestra Ubicación</h2>
+                <p style="margin-bottom: 15px; font-size: 0.9rem;">Visítanos en Preparatoria Alfa Fundación: Alberto Garduño 2214, Ferrocarrilera, Monterrey.</p>
+                
+                <div style="width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 20px;">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Alberto+Garduño+2214,+Ferrocarrilera,+Monterrey&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; filter: grayscale(0.8) invert(0.9) contrast(1.2);" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Alberto+Garduño+2214+Ferrocarrilera+Monterrey" target="_blank" class="btn-gaia" style="text-decoration: none; font-size: 0.7rem; display: flex; align-items: center;">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> Abrir en Maps
+                    </a>
+                    
+                    <button class="btn-gaia" style="font-size: 0.7rem;" onclick="goTo(0)">Volver al Inicio</button>
+                </div>
             </div>
         </section>
     </main>
@@ -467,7 +506,6 @@
             <div class="input-group" id="time-field" style="display:none;">
                 <label>Fecha y Hora Propuesta</label>
                 <input type="datetime-local" id="cust-time" onclick="this.showPicker()">
-                <small style="color: #666; font-size: 0.6rem;">*Entregas de 7:00 AM a 11:00 PM</small>
             </div>
 
             <div class="input-group">
@@ -579,23 +617,17 @@
             let place = (delivery === "Punto de Encuentro") ? document.getElementById('cust-point').value : document.getElementById('cust-address').value;
             
             if(!name) return alert("Por favor pon tu nombre.");
-            if(delivery === "Punto de Encuentro") {
-                if(!timeInput) return alert("Selecciona fecha y hora.");
-                const date = new Date(timeInput);
-                if(date.getHours() < 7 || date.getHours() >= 23) return alert("Horario solo disponible de 7 AM a 11 PM.");
-            } else if(!place) return alert("Ingresa tu dirección.");
-
+            
             let itemsTxt = "";
             cart.forEach(c => itemsTxt += `• ${c.name} (x${c.qty})%0A`);
             const total = document.getElementById('cart-total').innerText;
-            const formattedDate = timeInput ? timeInput.replace('T', ' ') : 'N/A';
             
-            const msg = `%F0%9F%8C%B2 *NUEVO PEDIDO GAIA* %F0%9F%8C%B2%0A%0A*Cliente:* ${name}%0A*Entrega:* ${delivery}%0A*Lugar:* ${place}%0A*Horario:* ${formattedDate}%0A*Pago:* ${payment}%0A%0A*Productos:*%0A${itemsTxt}%0A*Total:* ${total}`;
+            const msg = `%F0%9F%8C%B2 *NUEVO PEDIDO GAIA* %F0%9F%8C%B2%0A%0A*Cliente:* ${name}%0A*Entrega:* ${delivery}%0A*Lugar:* ${place}%0A*Pago:* ${payment}%0A%0A*Productos:*%0A${itemsTxt}%0A*Total:* ${total}`;
             window.open(`https://wa.me/528129501776?text=${msg}`); 
         }
 
         let targetX = 0, currentX = 0;
-        const maxScroll = window.innerWidth * 2; 
+        const maxScroll = window.innerWidth * 3; // 4 Secciones = maxScroll 3
 
         function goTo(idx) {
             targetX = idx * window.innerWidth;

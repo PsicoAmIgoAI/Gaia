@@ -3,92 +3,673 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRITICAL_SYSTEM_FAILURE</title>
+    <title>GAIA | The Deep Forest Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
+        :root {
+            --deep-green: #05110a;
+            --card-bg: #0f1c15;
+            --gold: #d4af37;
+            --text: #e0e0e0;
+            --glass: rgba(15, 28, 21, 0.98);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: auto !important;
+        }
+
         body {
-            background-color: #0a0a0a;
-            color: #ff3333;
-            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--deep-green);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden; 
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Capas de Fondo y Partículas */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-image: url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.15) saturate(0.5);
+            transform: scale(1.1);
+        }
+
+        #leaves-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Barra de Navegación */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(5,17,10,1), transparent);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            letter-spacing: 4px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #fff;
+            font-family: 'Cinzel';
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: #fff;
+            color: var(--deep-green); 
+            font-weight: bold;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Contenedor Principal de Secciones */
+        #world {
+            display: flex;
+            width: 400vw;
+            height: 100vh;
+            will-change: transform;
+        }
+
+        .section {
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            position: relative;
+            flex-shrink: 0;
+            padding: 20px;
+        }
+
+        /* Tienda y Productos */
+        .store-container {
+            width: 100%;
+            max-width: 1100px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .store-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .store-header h2 {
+            font-family: 'Cinzel';
+            color: var(--gold);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+        }
+
+        .products-scroll-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .products-grid {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            padding-bottom: 20px;
+        }
+
+        .product-info {
+            padding: 25px;
+            text-align: left;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            height: 35px;
             overflow: hidden;
         }
 
-        .container {
-            width: 80%;
-            border: 2px solid #ff3333;
-            padding: 40px;
-            background: rgba(255, 0, 0, 0.05);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-            position: relative;
+        .product-price {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.1rem;
         }
-
-        h1 {
-            font-size: 2rem;
+        
+        .btn-gaia {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-weight: 600;
             text-transform: uppercase;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ff3333;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            text-decoration: none; /* Importante para el enlace */
             display: inline-block;
         }
 
-        .error-code {
-            background: #ff3333;
-            color: #000;
-            padding: 5px 10px;
-            font-weight: bold;
+        .btn-gaia:hover {
+            background: var(--gold);
+            color: var(--deep-green);
         }
 
-        .details {
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-
-        .blink {
-            animation: blinker 1s linear infinite;
-        }
-
-        @keyframes blinker {
-            50% { opacity: 0; }
-        }
-
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            position: absolute;
+        /* Sidebar del Carrito */
+        #sidebar {
+            position: fixed;
             top: 0;
-            left: 0;
-            animation: scan 4s linear infinite;
+            right: -100%;
+            width: 450px;
+            height: 100%;
+            background: #0a0f0c;
+            border-left: 1px solid rgba(212, 175, 55, 0.2); 
+            z-index: 2000;
+            transition: 0.5s;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
         }
 
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+        #sidebar.open {
+            right: 0;
+        }
+
+        .checkout-container {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            background: rgba(255,255,255,0.02);
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 0;
+            color: #fff;
+            font-family: 'Montserrat';
+            outline: none;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        /* CORRECCIÓN VISUAL PARA SELECTS */
+        .input-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #05110a; /* Fondo oscuro */
+            color: #fff;
+            cursor: pointer;
+            /* Flecha dorada personalizada */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23d4af37' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+        }
+
+        /* Estilo para las opciones desplegadas */
+        .input-group select option {
+            background-color: #0a0f0c;
+            color: #fff;
+            padding: 10px;
+        }
+
+        input[type="datetime-local"] {
+            color-scheme: dark;
+        }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(1);
+        }
+
+        .qty-btn {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 16px;
+            background: var(--gold);
+            color: var(--deep-green);
+            border: none;
+            font-weight: 800;
+            font-family: 'Cinzel';
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-confirm:hover {
+            background: #fff;
+        }
+
+        .gaia-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+
+            #world {
+                flex-direction: column;
+                width: 100vw;
+                height: auto;
+                transform: none !important;
+            }
+
+            .section {
+                width: 100vw;
+                height: auto;
+                min-height: 100vh;
+                padding-top: 110px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            #sidebar {
+                width: 100% !important;
+            }
+
+            .store-container {
+                height: auto !important;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="scanline"></div>
-    <h1>[!] ERROR CRÍTICO DEL SISTEMA</h1>
-    <p>Se ha detectado una anomalía grave en el sector de arranque <span class="error-code">0x000000F4</span>.</p>
-    
-    <div class="details">
-        <p>> Verificando integridad de la base de datos... <strong>[FALLIDO]</strong></p>
-        <p>> Acceso al núcleo del servidor... <strong>[DENEGADO]</strong></p>
-        <p>> Volcado de memoria en curso: 0% ... 14% ... 32% ...</p>
-        <p class="blink">** ESTRUCTURA DE ARCHIVOS CORRUPTA - NO REINICIAR **</p>
+    <div class="bg-layer" id="bg-layer"></div>
+    <canvas id="leaves-canvas"></canvas>
+
+    <nav>
+        <div class="logo" onclick="goTo(0)">GAIA</div>
+        <div class="nav-links">
+            <button class="nav-btn" onclick="goTo(1)">Tienda</button>
+            <button class="nav-btn" onclick="goTo(2)">Nosotros</button>
+            <button class="nav-btn" onclick="goTo(3)">Ubicación</button>
+        </div>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-bag"></i>
+            <div class="badge" id="cart-count">0</div>
+        </div>
+    </nav>
+
+    <main id="world">
+        <section class="section">
+            <div style="text-align: center;">
+                <h1 style="font-family:'Cinzel'; color: var(--gold); font-size: 4.5rem;">Gaia</h1>
+                <p>Escribe tu historia en papel vivo.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                    <button class="btn-gaia" onclick="goTo(1)">Tienda</button>
+                    <button class="btn-gaia" onclick="goTo(2)">Nosotros</button>
+                </div>
+            </div>
+            <div class="gaia-footer">
+                <h3>GAIA</h3>
+                <p>EMPRESA REGISTRADA • TODOS LOS DERECHOS RESERVADOS • 2026</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="store-container">
+                <div class="store-header"><h2>Catálogo</h2></div>
+                <div class="products-scroll-area">
+                    <div class="products-grid" id="products-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div style="background: rgba(15,28,21,0.92); padding: 50px; border-radius: 15px; border: 1px solid var(--gold); max-width: 800px; text-align: center;">
+                <h2 style="margin-bottom: 20px; font-size: 2.2rem; color: var(--gold);">Nuestra Esencia</h2>
+                <p style="margin-bottom: 15px;">Somos una empresa dedicada a darles una segunda vida a tus ideas a través del papel reciclado. Nuestro proceso es totalmente artesanal: recolectamos papel, lo molemos hasta crear una pulpa nueva y lo transformamos en hojas únicas.</p>
+                <button class="btn-gaia" style="margin-top: 25px;" onclick="goTo(3)">¿Dónde estamos?</button>
+            </div>
+        </section>
+
+        <section class="section">
+            <div style="background: rgba(15,28,21,0.92); padding: 40px; border-radius: 15px; border: 1px solid var(--gold); max-width: 800px; text-align: center; width: 90%;">
+                <h2 style="margin-bottom: 15px; font-size: 2.2rem; color: var(--gold); font-family: 'Cinzel';">Nuestra Ubicación</h2>
+                <p style="margin-bottom: 15px; font-size: 0.9rem;">Visítanos en Preparatoria Alfa Fundación: Alberto Garduño 2214, Ferrocarrilera, Monterrey.</p>
+                
+                <div style="width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 20px;">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Alberto+Garduño+2214,+Ferrocarrilera,+Monterrey&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; filter: grayscale(0.8) invert(0.9) contrast(1.2);" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Alberto+Garduño+2214+Ferrocarrilera+Monterrey" target="_blank" class="btn-gaia" style="text-decoration: none; font-size: 0.7rem; display: flex; align-items: center;">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> Abrir en Maps
+                    </a>
+                    
+                    <button class="btn-gaia" style="font-size: 0.7rem;" onclick="goTo(0)">Volver al Inicio</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="sidebar">
+        <h2 style="color:var(--gold); font-family:'Cinzel';">Mochila</h2>
+        <div id="cart-list" style="flex-grow:1; overflow-y:auto; margin-bottom:15px;"></div>
+
+        <div id="checkout-section" style="display:none;" class="checkout-container">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold); margin-bottom:15px;">
+                <span>Total</span> <span id="cart-total">$0</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="cust-name" placeholder="Tu nombre">
+            </div>
+
+            <div class="input-group">
+                <label>Tipo de Entrega</label>
+                <select id="cust-delivery" onchange="toggleDeliveryFields()">
+                    <option value="Envío a Domicilio">Envío a Domicilio</option>
+                    <option value="Punto de Encuentro">Punto de Encuentro</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="address-field">
+                <label>Dirección</label>
+                <input type="text" id="cust-address" placeholder="Calle, Colonia, CP">
+            </div>
+
+            <div class="input-group" id="meeting-points" style="display:none;">
+                <label>Selecciona Punto</label>
+                <select id="cust-point">
+                    <option value="Ciudad Universitaria UANL">Ciudad Universitaria UANL</option>
+                    <option value="PAF">PAF</option>
+                    <option value="LABNL">LABNL</option>
+                    <option value="Metro Cuauhtémoc">Estación del Metro Cuauhtémoc</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="time-field" style="display:none;">
+                <label>Fecha y Hora Propuesta</label>
+                <input type="datetime-local" id="cust-time" onclick="this.showPicker()">
+            </div>
+
+            <div class="input-group">
+                <label>Método de Pago</label>
+                <select id="cust-payment">
+                    <option value="Transferencia">Transferencia Bancaria</option>
+                    <option value="Efectivo">Efectivo al recibir</option>
+                </select>
+            </div>
+
+            <button class="btn-confirm" onclick="finalOrder()">CONFIRMAR PEDIDO</button>
+            <div style="margin-top:10px; text-align:center; font-size:0.6rem; color:#444; cursor:pointer;" onclick="toggleCart()">VOLVER</div>
+        </div>
     </div>
 
-    <p style="margin-top: 30px; font-size: 0.8rem; color: #666;">
-        Póngase en contacto con el administrador de infraestructura inmediatamente. 
-        ID de Incidente: ERR-SYS-9921-X
-    </p>
-</div>
+    <script>
+        const products = [
+            { id: 1, name: "Libreta (40 Hojas)", price: 180 },
+            { id: 2, name: "Agenda Gaia", price: 210 }
+        ];
 
+        function toggleDeliveryFields() {
+            const type = document.getElementById('cust-delivery').value;
+            const addr = document.getElementById('address-field');
+            const points = document.getElementById('meeting-points');
+            const time = document.getElementById('time-field');
+
+            if(type === 'Punto de Encuentro') {
+                addr.style.display = 'none';
+                points.style.display = 'block';
+                time.style.display = 'block';
+            } else {
+                addr.style.display = 'block';
+                points.style.display = 'none';
+                time.style.display = 'none';
+            }
+        }
+
+        const grid = document.getElementById('products-container');
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <div class="product-info">
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-price">$${p.price}</div>
+                        <button class="btn-gaia" style="width:100%; font-size:0.7rem; margin-top:10px;" onclick="addToCart(${p.id})">Añadir</button>
+                    </div>
+                </div>`;
+        });
+
+        let cart = [];
+
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            const exist = cart.find(x => x.id === id);
+            if(exist) exist.qty++; else cart.push({...p, qty: 1});
+            updateUI();
+            toggleCart(true);
+        }
+
+        function modQty(id, val) {
+            const item = cart.find(x => x.id === id);
+            if(item) {
+                item.qty += val;
+                if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            const list = document.getElementById('cart-list');
+            list.innerHTML = "";
+            let total = 0, count = 0;
+
+            if(cart.length === 0) {
+                list.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:30px;">Vacio</p>';
+                document.getElementById('checkout-section').style.display = 'none';
+            } else {
+                document.getElementById('checkout-section').style.display = 'block';
+                cart.forEach(item => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+                    list.innerHTML += `
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; font-size:0.8rem; background:rgba(255,255,255,0.03); padding:8px; border-radius:6px;">
+                            <div style="flex:1"><b>${item.name}</b><br>$${item.price}</div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <button class="qty-btn" onclick="modQty(${item.id}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="modQty(${item.id}, 1)">+</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            document.getElementById('cart-total').innerText = "$" + total;
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        function toggleCart(open = false) {
+            const side = document.getElementById('sidebar');
+            if(open) side.classList.add('open');
+            else side.classList.toggle('open');
+        }
+
+        function finalOrder() {
+            const name = document.getElementById('cust-name').value;
+            const delivery = document.getElementById('cust-delivery').value;
+            const payment = document.getElementById('cust-payment').value;
+            const timeInput = document.getElementById('cust-time').value;
+            let place = (delivery === "Punto de Encuentro") ? document.getElementById('cust-point').value : document.getElementById('cust-address').value;
+            
+            if(!name) return alert("Por favor pon tu nombre.");
+            
+            let itemsTxt = "";
+            cart.forEach(c => itemsTxt += `• ${c.name} (x${c.qty})%0A`);
+            const total = document.getElementById('cart-total').innerText;
+            
+            const msg = `%F0%9F%8C%B2 *NUEVO PEDIDO GAIA* %F0%9F%8C%B2%0A%0A*Cliente:* ${name}%0A*Entrega:* ${delivery}%0A*Lugar:* ${place}%0A*Pago:* ${payment}%0A%0A*Productos:*%0A${itemsTxt}%0A*Total:* ${total}`;
+            window.open(`https://wa.me/528129501776?text=${msg}`); 
+        }
+
+        let targetX = 0, currentX = 0;
+        const maxScroll = window.innerWidth * 3; // 4 Secciones = maxScroll 3
+
+        function goTo(idx) {
+            targetX = idx * window.innerWidth;
+        }
+
+        window.addEventListener('wheel', e => {
+            if (window.innerWidth > 768) {
+                if (e.target.closest('#sidebar') || e.target.closest('.products-scroll-area')) return;
+                targetX = Math.max(0, Math.min(targetX + e.deltaY, maxScroll));
+            }
+        });
+
+        function animate() {
+            if (window.innerWidth > 768) {
+                currentX += (targetX - currentX) * 0.08;
+                document.getElementById('world').style.transform = `translateX(-${currentX}px)`;
+            } else {
+                document.getElementById('world').style.transform = 'none';
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        const canvas = document.getElementById('leaves-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let leaves = [];
+        for(let i=0; i<15; i++) {
+            leaves.push({x: Math.random() * canvas.width, y: Math.random() * canvas.height, s: Math.random() * 2, sp: Math.random() * 1 + 0.5});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "rgba(212, 175, 55, 0.15)";
+            leaves.forEach(l => {
+                l.y += l.sp;
+                if(l.y > canvas.height) l.y = -10;
+                ctx.beginPath(); ctx.arc(l.x, l.y, l.s, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
 </body>
 </html>
